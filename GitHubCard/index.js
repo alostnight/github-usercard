@@ -2,7 +2,14 @@
            (replacing the palceholder with your Github name):
            https://api.github.com/users/<your name>
 */
-
+axios.get("https://api.github.com/users/alostnight")
+  .then(response => {
+    console.log(response);
+    cardPoint.append(userCard(response.data));
+  })
+  .catch(error => {
+    
+  });
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,7 +31,23 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = ["alostnight", "tetondan", "dustinmyers", "justsml", "luishrd", "bigknell"];
+
+followersArray.forEach(user => {
+  axios
+    .get('https://api.github.com/users/' + user)
+    .then(response => {
+      cardContainer.append(userCard(response));
+    })
+    .catch(error => {
+      console.log("error", error);
+    });
+});
+
+
+
+const cardContainer = document.querySelector(".cards");
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
@@ -45,6 +68,47 @@ const followersArray = [];
 </div>
 
 */
+function userCard(user) {
+  const card = document.createElement("div"),
+    img = document.createElement("img"),
+    cardInfo = document.createElement("div"),
+    displayName = document.createElement("h3"),
+    userName = document.createElement("p"),
+    location = document.createElement("p"),
+    profile = document.createElement("p"),
+    followers = document.createElement("p"),
+    following = document.createElement("p"),
+    bio = document.createElement("p");
+    profileUrl = document.createElement("a"), 
+    card.classList.add("card");
+    cardInfo.classList.add("card-info");
+    displayName.classList.add("name");
+    userName.classList.add("username");
+
+    profile.append(profileUrl);
+    card.append(img);
+    card.append(cardInfo);
+    cardInfo.append(displayName);
+    cardInfo.append(userName);
+    cardInfo.append(location);
+    cardInfo.append(profile);
+    cardInfo.append(followers);
+    cardInfo.append(following);
+    cardInfo.append(bio);
+
+    img.src = user.data.avatar_url;
+    displayName.textContent = user.data.name;
+    userName.textContent = user.data.login;
+    location.textContent = `Location: ${user.data.location}`;
+    profileUrl.textContent = `Profile URL: ${user.data.html_url}`;
+    profileUrl.href = user.data.html_url;
+    followers.textContent = `Followers: ${user.data.followers}`;
+    following.textContent = `Following: ${user.data.following}`;
+    bio.textContent = `Bio: ${user.data.bio}`;
+
+
+  return card;
+}
 
 /* List of LS Instructors Github username's: 
   tetondan
